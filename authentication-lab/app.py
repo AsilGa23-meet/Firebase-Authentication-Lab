@@ -13,12 +13,12 @@ config = {
   "messagingSenderId": "597778007614",
   "appId": "1:597778007614:web:3ff7d05d2f00eab8d3f36f",
   "measurementId": "G-F4JWXP9V10",
-  "databaseURL":""
+  "databaseURL":"https://cool-firebase-go-brrrr-default-rtdb.europe-west1.firebasedatabase.app/"
 }
 
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
-
+db = firebase.database()
 @app.route('/', methods=['GET', 'POST'])
 def signin():
    error = ""
@@ -32,7 +32,7 @@ def signin():
            error = "Authentication failed"
    return render_template("signin.html")
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/signup',  methods=['GET', 'POST'])
 def signup():
    error = ""
    if request.method == 'POST':
@@ -40,6 +40,9 @@ def signup():
        password = request.form['password']
        try:
             login_session['user'] = auth.create_user_with_email_and_password(email, password)
+            user = {"fname": "asil","password":"asil123","lname": "gazmawi" ,"email": "asillimar@gmail.com","bio":"loves"}
+            db.child("Users").child(login_session['user']
+                ['localId']).set(user)
             return redirect('add_tweet')
        except:
            error = "Authentication failed"
@@ -49,7 +52,7 @@ def signup():
 def signout():
     login_session['user'] = None
     auth.current_user = None
-    return redirect('signin')
+    return redirect('/')
 
 
 
